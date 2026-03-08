@@ -1,0 +1,8 @@
+.gradle
+
+### IntelliJ IDEA ###
+.idea
+
+### VS Code ###
+.metals/
+.vscode/
