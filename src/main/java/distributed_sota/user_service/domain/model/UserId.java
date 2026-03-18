@@ -1,10 +1,9 @@
 package distributed_sota.user_service.domain.model;
 
-import common.ddd.ValueObject;
-import distributed_sota.dronefleet_service.domain.model.DroneId;
-
 import java.util.Objects;
 import java.util.Random;
+
+import common.ddd.ValueObject;
 
 public record UserId(String value) implements ValueObject {
 
