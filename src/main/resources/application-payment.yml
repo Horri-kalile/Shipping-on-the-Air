@@ -1,0 +1,19 @@
+server:
+  port: 8083
+
+services:
+  payment:
+    base-url: http://localhost:8083/payments
+
+payment:
+  callback:
+    url: http://localhost:8083/payments
+
+spring:
+  data:
+    mongodb:
+      uri: ${PAYMENT_MONGODB_URI}
+  kafka:
+    consumer:
+      group-id: payment-service
+    bootstrap-servers: localhost:9092

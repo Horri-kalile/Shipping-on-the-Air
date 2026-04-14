@@ -1,0 +1,8 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  data:
+    mongodb:
+      auto-index-creation: true
+  kafka:
+    bootstrap-servers: localhost:9092

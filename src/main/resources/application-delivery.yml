@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+services:
+  dronefleet:
+    base-url: http://localhost:8082/drones
+  payment:
+    base-url: http://localhost:8083/payments
+
+spring:
+  data:
+    mongodb:
+      uri: ${DELIVERY_MONGODB_URI}
+  kafka:
+    consumer:
+      group-id: delivery-service
+      auto-offset-reset: earliest
+    bootstrap-servers: localhost:9092
