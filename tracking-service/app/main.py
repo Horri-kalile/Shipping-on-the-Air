@@ -6,6 +6,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from app.api import router
 from app.config import (
     APP_NAME,
+    DELIVERY_SERVICE_BASE_URL,
     KAFKA_BOOTSTRAP_SERVERS,
     KAFKA_GROUP_ID,
     KAFKA_TOPIC,
@@ -13,6 +14,7 @@ from app.config import (
     MONGO_URI,
 )
 from app.consumer import TrackingConsumer
+from app.delivery_client import DeliveryServiceClient
 from app.repository import TrackingRepository
 
 
@@ -21,8 +23,10 @@ async def lifespan(app: FastAPI):
     mongo_client = AsyncIOMotorClient(MONGO_URI)
     database = mongo_client[MONGO_DB_NAME]
     repository = TrackingRepository(database)
+    delivery_client = DeliveryServiceClient(DELIVERY_SERVICE_BASE_URL)
     consumer = TrackingConsumer(
         repository=repository,
+        delivery_client=delivery_client,
         bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
         topic=KAFKA_TOPIC,
         group_id=KAFKA_GROUP_ID,
@@ -37,6 +41,7 @@ async def lifespan(app: FastAPI):
         yield
     finally:
         await consumer.stop()
+        await delivery_client.close()
         mongo_client.close()
 
 

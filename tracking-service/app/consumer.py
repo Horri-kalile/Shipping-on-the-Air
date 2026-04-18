@@ -5,6 +5,7 @@ from datetime import datetime
 
 from aiokafka import AIOKafkaConsumer
 
+from app.delivery_client import DeliveryServiceClient
 from app.models import TrackingState
 from app.repository import TrackingRepository
 
@@ -16,11 +17,13 @@ class TrackingConsumer:
     def __init__(
         self,
         repository: TrackingRepository,
+        delivery_client: DeliveryServiceClient,
         bootstrap_servers: str,
         topic: str,
         group_id: str,
     ):
         self.repository = repository
+        self.delivery_client = delivery_client
         self.bootstrap_servers = bootstrap_servers
         self.topic = topic
         self.group_id = group_id
@@ -91,6 +94,9 @@ class TrackingConsumer:
         tracking_state.drone_id = event.get("droneId")
         tracking_state.status = "ASSIGNED"
         tracking_state.last_update_time = self._parse_occurred_at(event.get("occurredAt"))
+        remaining_minutes = await self._get_remaining_minutes(delivery_id)
+        if remaining_minutes is not None:
+            tracking_state.estimated_remaining_minutes = remaining_minutes
         await self.repository.save(tracking_state)
 
     async def _handle_location_updated(self, event: dict) -> None:
@@ -107,6 +113,9 @@ class TrackingConsumer:
         tracking_state.current_latitude = event.get("latitude")
         tracking_state.current_longitude = event.get("longitude")
         tracking_state.last_update_time = self._parse_occurred_at(event.get("occurredAt"))
+        remaining_minutes = await self._get_remaining_minutes(delivery_id)
+        if remaining_minutes is not None:
+            tracking_state.estimated_remaining_minutes = remaining_minutes
         await self.repository.save(tracking_state)
 
     async def _handle_at_pickup(self, event: dict) -> None:
@@ -121,6 +130,9 @@ class TrackingConsumer:
         tracking_state.drone_id = event.get("droneId")
         tracking_state.status = "AT_PICKUP"
         tracking_state.last_update_time = self._parse_occurred_at(event.get("occurredAt"))
+        remaining_minutes = await self._get_remaining_minutes(delivery_id)
+        if remaining_minutes is not None:
+            tracking_state.estimated_remaining_minutes = remaining_minutes
         await self.repository.save(tracking_state)
 
     async def _handle_delivered(self, event: dict) -> None:
@@ -132,6 +144,7 @@ class TrackingConsumer:
         tracking_state.drone_id = event.get("droneId")
         tracking_state.status = "DELIVERED"
         tracking_state.last_update_time = self._parse_occurred_at(event.get("occurredAt"))
+        tracking_state.estimated_remaining_minutes = 0
         await self.repository.save(tracking_state)
 
     async def _get_or_create_state(self, delivery_id: str, default_status: str) -> TrackingState:
@@ -146,3 +159,6 @@ class TrackingConsumer:
             return None
 
         return datetime.fromisoformat(occurred_at.replace("Z", "+00:00"))
+
+    async def _get_remaining_minutes(self, delivery_id: str) -> int | None:
+        return await self.delivery_client.get_remaining_minutes(delivery_id)

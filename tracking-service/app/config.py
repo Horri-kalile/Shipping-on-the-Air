@@ -9,3 +9,5 @@ KAFKA_GROUP_ID = "tracking-service"
 MONGO_URI = "mongodb://mongodb:27017"
 MONGO_DB_NAME = "tracking"
 MONGO_COLLECTION_NAME = "tracking_states"
+
+DELIVERY_SERVICE_BASE_URL = "http://delivery-service:8080"
