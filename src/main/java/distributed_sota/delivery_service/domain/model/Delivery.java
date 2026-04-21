@@ -32,13 +32,49 @@ public class Delivery implements Aggregate<DeliveryId> {
     // CONSTRUCTOR
     // -------------------------------------------------------------------------
     public Delivery(DeliveryId id, DeliveryRequest request, ETA eta, Price price) {
+        this(id, request, DeliveryStatus.CREATED, Optional.empty(), price, eta, new RemainingDuration(eta), null);
+    }
+
+    private Delivery(
+            DeliveryId id,
+            DeliveryRequest request,
+            DeliveryStatus status,
+            Optional<String> droneId,
+            Price price,
+            ETA eta,
+            RemainingDuration remainingDuration,
+            Location droneLocation
+    ) {
         this.id = id;
         this.request = request;
+        this.status = status;
+        this.droneId = droneId;
         this.price = price;
         this.eta = eta;
-        this.remainingDuration = new RemainingDuration(eta);
-        this.droneId = Optional.empty();
-        this.status = DeliveryStatus.CREATED;
+        this.remainingDuration = remainingDuration;
+        this.droneLocation = droneLocation;
+    }
+
+    public static Delivery rehydrate(
+            DeliveryId id,
+            DeliveryRequest request,
+            DeliveryStatus status,
+            Optional<String> droneId,
+            Price price,
+            ETA eta,
+            RemainingDuration remainingDuration,
+            Location droneLocation
+    ) {
+        return new Delivery(
+                id,
+                request,
+                status,
+                droneId,
+                price,
+                eta,
+                remainingDuration,
+                droneLocation
+        );
     }
 
     //-------------------------------------------------------------------------

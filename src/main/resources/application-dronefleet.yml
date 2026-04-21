@@ -1,0 +1,15 @@
+server:
+  port: 8082
+
+services:
+  delivery:
+    base-url: http://localhost:8080/deliveries
+
+spring:
+  data:
+    mongodb:
+      uri: ${DRONEFLEET_MONGODB_URI}
+  kafka:
+    consumer:
+      group-id: dronefleet-service
+    bootstrap-servers: localhost:9092

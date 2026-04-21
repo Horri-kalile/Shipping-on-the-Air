@@ -17,7 +17,6 @@ import distributed_sota.delivery_service.domain.service.DeliveryCalculator;
 import distributed_sota.delivery_service.infrastructure.adapter.DroneFleetAdapter;
 import distributed_sota.delivery_service.infrastructure.adapter.PaymentAdapter;
 import distributed_sota.delivery_service.infrastructure.event.DomainEventPublisherImpl;
-import distributed_sota.delivery_service.infrastructure.repository.InMemoryDeliveryRepository;
 
 @SpringBootApplication
 public class DeliveryServiceMain {
@@ -40,14 +39,6 @@ public class DeliveryServiceMain {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
-    }
-
-    
-    // REPOSITORY
-    
-    @Bean
-    public DeliveryRepository deliveryRepository() {
-        return new InMemoryDeliveryRepository();
     }
 
     

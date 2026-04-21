@@ -1,4 +1,4 @@
-package distributed_sota.delivery_service.application;
+package distributed_sota.delivery_service.application.dto;
 
 public enum PaymentStateDTO {
     PAYMENT_PENDING,
