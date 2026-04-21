@@ -1,15 +1,5 @@
 package distributed_sota.dronefleet_service.infrastructure;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import distributed_sota.delivery_service.infrastructure.DeliveryServiceMain;
-import distributed_sota.dronefleet_service.application.port.*;
-import distributed_sota.dronefleet_service.application.service.DroneServiceImpl;
-import distributed_sota.dronefleet_service.domain.service.DroneCalculator;
-import distributed_sota.dronefleet_service.infrastructure.adapter.DeliveryAdapter;
-import distributed_sota.dronefleet_service.infrastructure.adapter.DroneTelemetryAdapter;
-import distributed_sota.dronefleet_service.infrastructure.event.DroneEventPublisher;
-import distributed_sota.dronefleet_service.infrastructure.repository.InMemoryBaseRepository;
-import distributed_sota.dronefleet_service.infrastructure.repository.InMemoryDroneRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +7,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import distributed_sota.dronefleet_service.application.port.BaseRepository;
+import distributed_sota.dronefleet_service.application.port.DeliveryServicePort;
+import distributed_sota.dronefleet_service.application.port.DroneRepository;
+import distributed_sota.dronefleet_service.application.port.DroneService;
+import distributed_sota.dronefleet_service.application.port.DroneTelemetryPort;
+import distributed_sota.dronefleet_service.application.port.EventPublisherPort;
+import distributed_sota.dronefleet_service.application.service.DroneServiceImpl;
+import distributed_sota.dronefleet_service.domain.service.DroneCalculator;
+import distributed_sota.dronefleet_service.infrastructure.adapter.DeliveryAdapter;
+import distributed_sota.dronefleet_service.infrastructure.adapter.DroneTelemetryAdapter;
+import distributed_sota.dronefleet_service.infrastructure.event.DroneEventPublisher;
 
 @SpringBootApplication
 @EnableScheduling
@@ -34,19 +38,6 @@ public class DroneServiceMain {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
-    }
-    // -------------------------------------------------------------------------
-    // REPOSITORIES
-    // -------------------------------------------------------------------------
-
-    @Bean
-    public DroneRepository droneRepository() {
-        return new InMemoryDroneRepository();
-    }
-
-    @Bean
-    public BaseRepository baseRepository() {
-        return new InMemoryBaseRepository();
     }
 
     // -------------------------------------------------------------------------

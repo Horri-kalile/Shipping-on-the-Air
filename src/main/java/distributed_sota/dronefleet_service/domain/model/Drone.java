@@ -47,6 +47,34 @@ public class Drone implements Aggregate<DroneId> {
                  Location location,
                  Double kilometrage) {
 
+        this(
+            id,
+            baseId,
+            battery,
+            location,
+            kilometrage,
+            DroneState.AVAILABLE,
+            null,
+            null,
+            null,
+            null,
+            MissionPhase.NONE
+        );
+
+        }
+
+        private Drone(DroneId id,
+              BaseId baseId,
+              Battery battery,
+              Location location,
+              Double kilometrage,
+              DroneState state,
+              String currentDeliveryId,
+              Location pickupLocation,
+              Location dropoffLocation,
+              Location returnBaseLocation,
+              MissionPhase missionPhase) {
+
         this.id = Objects.requireNonNull(id);
         this.baseId = Objects.requireNonNull(baseId);
         this.battery = Objects.requireNonNull(battery);
@@ -54,13 +82,40 @@ public class Drone implements Aggregate<DroneId> {
 
         this.kilometrage = kilometrage == null ? 0.0 : kilometrage;
 
-        this.state = DroneState.AVAILABLE;
-        this.missionPhase = MissionPhase.NONE;
+        this.state = state == null ? DroneState.AVAILABLE : state;
+        this.missionPhase = missionPhase == null ? MissionPhase.NONE : missionPhase;
 
-        this.currentDeliveryId = null;
-        this.pickupLocation = null;
-        this.dropoffLocation = null;
-        this.returnBaseLocation = null;
+        this.currentDeliveryId = currentDeliveryId;
+        this.pickupLocation = pickupLocation;
+        this.dropoffLocation = dropoffLocation;
+        this.returnBaseLocation = returnBaseLocation;
+
+        }
+
+        public static Drone rehydrate(DroneId id,
+                      BaseId baseId,
+                      Battery battery,
+                      Location location,
+                      Double kilometrage,
+                      DroneState state,
+                      String currentDeliveryId,
+                      Location pickupLocation,
+                      Location dropoffLocation,
+                      Location returnBaseLocation,
+                      MissionPhase missionPhase) {
+        return new Drone(
+            id,
+            baseId,
+            battery,
+            location,
+            kilometrage,
+            state,
+            currentDeliveryId,
+            pickupLocation,
+            dropoffLocation,
+            returnBaseLocation,
+            missionPhase
+        );
 
     }
 
@@ -74,6 +129,7 @@ public class Drone implements Aggregate<DroneId> {
     public Location location() { return location; }
     public DroneState state() { return state; }
     public double kilometrage() { return kilometrage; }
+    public MissionPhase missionPhase() { return missionPhase; }
 
     public Optional<String> currentDeliveryId() {
         return Optional.ofNullable(currentDeliveryId);

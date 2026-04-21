@@ -17,16 +17,38 @@ public class Payment implements Aggregate<PaymentId> {
     private PaymentState state;
 
     private Payment(PaymentId paymentId, String userId, String deliveryId, Amount amount) {
+        this(paymentId, userId, deliveryId, amount, Instant.now(), PaymentState.PAYMENT_PENDING);
+    }
+
+    private Payment(
+            PaymentId paymentId,
+            String userId,
+            String deliveryId,
+            Amount amount,
+            Instant whenCreated,
+            PaymentState state
+    ) {
         this.paymentId = Objects.requireNonNull(paymentId);
         this.userId = Objects.requireNonNull(userId);
         this.deliveryId = Objects.requireNonNull(deliveryId);
         this.amount = Objects.requireNonNull(amount);
-        this.whenCreated = Instant.now();
-        this.state = PaymentState.PAYMENT_PENDING;
+        this.whenCreated = Objects.requireNonNull(whenCreated);
+        this.state = Objects.requireNonNull(state);
     }
 
     public static Payment create(PaymentId id, String userId, String deliveryId, Amount amount) {
         return new Payment(id, userId, deliveryId, amount);
+    }
+
+    public static Payment rehydrate(
+            PaymentId id,
+            String userId,
+            String deliveryId,
+            Amount amount,
+            Instant whenCreated,
+            PaymentState state
+    ) {
+        return new Payment(id, userId, deliveryId, amount, whenCreated, state);
     }
 
     public PaymentId getPaymentId() { return paymentId; }

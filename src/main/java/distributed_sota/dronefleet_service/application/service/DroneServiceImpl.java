@@ -215,6 +215,12 @@ public class DroneServiceImpl implements DroneService {
                 updatedBattery
         );
         droneRepository.save(drone);
+
+        drone.currentDeliveryId().ifPresent(deliveryId ->
+                eventPublisher.publish(
+                        DroneLocationUpdatedEvent.of(deliveryId, droneId.id(), lat, lon)
+                )
+        );
     }
 
 

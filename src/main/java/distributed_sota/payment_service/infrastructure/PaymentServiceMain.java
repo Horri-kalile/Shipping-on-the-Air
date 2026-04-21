@@ -1,12 +1,10 @@
 package distributed_sota.payment_service.infrastructure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import distributed_sota.dronefleet_service.infrastructure.DroneServiceMain;
 import distributed_sota.payment_service.application.service.PaymentServiceImpl;
 import distributed_sota.payment_service.application.port.*;
 import distributed_sota.payment_service.infrastructure.adapter.PaymentProcessorAdapter;
 import distributed_sota.payment_service.infrastructure.event.PaymentEventPublisher;
-import distributed_sota.payment_service.infrastructure.repository.InMemoryPaymentRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -39,14 +37,6 @@ public class PaymentServiceMain {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
-    }
-
-    // -------------------------------------------------------------------------
-    // REPOSITORY
-    // -------------------------------------------------------------------------
-    @Bean
-    public PaymentRepository paymentRepository() {
-        return new InMemoryPaymentRepository();
     }
 
     // -------------------------------------------------------------------------
