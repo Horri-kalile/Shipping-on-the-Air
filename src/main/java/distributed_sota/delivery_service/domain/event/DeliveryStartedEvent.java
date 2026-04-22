@@ -1,10 +1,19 @@
 package distributed_sota.delivery_service.domain.event;
 
-import distributed_sota.delivery_service.domain.model.DeliveryId;
+import java.time.Instant;
 
-/**
- *
- * Domain event: delivery started
- *
- */
-public record DeliveryStartedEvent (DeliveryId id, String userId) implements DeliveryEvent {}
+public record DeliveryStartedEvent(
+        String deliveryId,
+        String userId,
+        Instant occurredAt
+) implements DeliveryEvent {
+
+    public static DeliveryStartedEvent of(String deliveryId, String userId) {
+        return new DeliveryStartedEvent(deliveryId, userId, Instant.now());
+    }
+
+    @Override
+    public String type() {
+        return "DeliveryStartedEvent";
+    }
+}

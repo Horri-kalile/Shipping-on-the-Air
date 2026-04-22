@@ -1,5 +1,6 @@
 package distributed_sota.delivery_service.domain.model;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -12,6 +13,7 @@ import distributed_sota.delivery_service.domain.event.DeliveryFailedEvent;
 import distributed_sota.delivery_service.domain.event.DeliveryStartedEvent;
 import distributed_sota.delivery_service.domain.event.EtaUpdatedEvent;
 import distributed_sota.delivery_service.domain.event.WaitForPickUpEvent;
+import distributed_sota.delivery_service.domain.service.DeliveryCalculator;
 
 public class Delivery implements Aggregate<DeliveryId> {
 
@@ -88,7 +90,7 @@ public class Delivery implements Aggregate<DeliveryId> {
         this.droneLocation = location;
         logger.info(() -> String.format("Updated drone location for delivery %s", id));
 
-        return EtaUpdatedEvent.from(id, request.userId(), eta, remainingDuration);
+        return EtaUpdatedEvent.of(id.toString(), request.userId(), eta.toString(), remainingDuration.toMinutes());
     }
 
     public void updateETA(ETA eta) {
@@ -136,7 +138,7 @@ public class Delivery implements Aggregate<DeliveryId> {
         }
         this.status = DeliveryStatus.WAIT_FOR_PICKUP;
         logger.info(() -> String.format("Delivery %s waiting for pickup", id));
-        return new WaitForPickUpEvent(id, request.userId());
+        return new WaitForPickUpEvent(id.toString(), request.userId(), Instant.now());
     }
 
     public DeliveryStartedEvent markPickedUp() {
@@ -146,7 +148,7 @@ public class Delivery implements Aggregate<DeliveryId> {
         }
         this.status = DeliveryStatus.IN_PROGRESS;
         logger.info(() -> String.format("Delivery %s marked IN_PROGRESS", id));
-        return new DeliveryStartedEvent(id, request.userId());
+        return new DeliveryStartedEvent(id.toString(), request.userId(), Instant.now());
     }
 
     public DeliveryCompletedEvent markDelivered() {
@@ -156,7 +158,7 @@ public class Delivery implements Aggregate<DeliveryId> {
         }
         this.status = DeliveryStatus.COMPLETED;
         logger.info(() -> String.format("Delivery %s marked COMPLETED", id));
-        return new DeliveryCompletedEvent(id, request.userId());
+        return new DeliveryCompletedEvent(id.toString(), request.userId(), Instant.now());
     }
 
     public DeliveryCanceledEvent cancel() throws DeliveryAlreadyCompletedException, DeliveryAlreadyStartedException {
@@ -172,7 +174,7 @@ public class Delivery implements Aggregate<DeliveryId> {
         this.status = DeliveryStatus.CANCELED;
         logger.info(() -> String.format("Delivery %s canceled%s", id, refundNeeded ? " with refund" : ""));
 
-        return new DeliveryCanceledEvent(id, request.userId(), refundNeeded);
+        return new DeliveryCanceledEvent(id.toString(), request.userId(), refundNeeded, Instant.now());
     }
 
     public DeliveryFailedEvent markFailed(String reason) throws DeliveryAlreadyCompletedException {
@@ -182,7 +184,7 @@ public class Delivery implements Aggregate<DeliveryId> {
             throw new IllegalStateException("Delivery already canceled");
         this.status = DeliveryStatus.FAILED;
         logger.warning(() -> String.format("Delivery %s failed: %s", id, reason));
-        return new DeliveryFailedEvent(id, request.userId(), reason);
+        return new DeliveryFailedEvent(id.toString(), request.userId(), reason, Instant.now());
     }
 
     //-------------------------------------------------------------------------

@@ -9,20 +9,13 @@ import java.time.Instant;
  */
 public class DroneRequestedEvent implements DeliveryEvent {
 
-    private final DeliveryId deliveryId;
-    private final Instant occurredAt;
-
-    public DroneRequestedEvent(DeliveryId deliveryId) {
-        if (deliveryId == null) throw new IllegalArgumentException("DeliveryId cannot be null");
-        this.deliveryId = deliveryId;
-        this.occurredAt = Instant.now();
+    @Override
+    public String type() {
+        return "DroneRequestedEvent";
     }
 
-    public DeliveryId getDeliveryId() {
-        return deliveryId;
-    }
-
-    public Instant getOccurredAt() {
-        return occurredAt;
+    @Override
+    public Instant occurredAt() {
+        return null;
     }
 }

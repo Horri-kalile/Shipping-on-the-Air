@@ -10,6 +10,9 @@ public class RemainingDuration implements ValueObject {
         this.remaining = eta.remainingFromNow();
     }
 
+    public long toMinutes() {
+        return remaining.toMinutes();
+    }
     public Duration value() {
         return remaining;
     }

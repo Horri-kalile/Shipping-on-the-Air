@@ -1,11 +1,20 @@
 package distributed_sota.delivery_service.domain.event;
 
-import distributed_sota.delivery_service.domain.model.DeliveryId;
+import java.time.Instant;
 
-/**
- *
- * Domain event: delivery canceled
- *
- */
-public record DeliveryCanceledEvent (DeliveryId id, String userId, boolean refundNeeded)
-        implements DeliveryEvent {}
+public record DeliveryCanceledEvent(
+        String deliveryId,
+        String userId,
+        boolean refundNeeded,
+        Instant occurredAt
+) implements DeliveryEvent {
+
+    public static DeliveryCanceledEvent of(String deliveryId, String userId, boolean refundNeeded) {
+        return new DeliveryCanceledEvent(deliveryId, userId, refundNeeded, Instant.now());
+    }
+
+    @Override
+    public String type() {
+        return "DeliveryCanceledEvent";
+    }
+}

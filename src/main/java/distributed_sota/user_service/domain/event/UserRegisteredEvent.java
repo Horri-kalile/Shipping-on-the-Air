@@ -1,7 +1,20 @@
 package distributed_sota.user_service.domain.event;
 
-public record UserRegisteredEvent(String userId, String email, String username, String type) {
-    public UserRegisteredEvent(String userId, String email, String username) {
-        this(userId, email, username, "UserRegisteredEvent");
+import java.time.Instant;
+
+public record UserRegisteredEvent(
+        String userId,
+        String username,
+        String email,
+        Instant occurredAt
+) implements UserEvent {
+
+    public static UserRegisteredEvent of(String userId, String username, String email) {
+        return new UserRegisteredEvent(userId, username, email, Instant.now());
+    }
+
+    @Override
+    public String type() {
+        return "UserRegisteredEvent";
     }
 }

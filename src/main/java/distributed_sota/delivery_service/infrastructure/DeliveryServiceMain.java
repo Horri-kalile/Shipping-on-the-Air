@@ -66,8 +66,8 @@ public class DeliveryServiceMain {
     // DOMAIN EVENT PUBLISHER (Kafka)
     
     @Bean
-    public DomainEventPublisher domainEventPublisher(KafkaTemplate<String, String> kafkaTemplate) {
-        return new DomainEventPublisherImpl(kafkaTemplate,"delivery-events");
+    public DomainEventPublisher domainEventPublisher(KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
+        return new DomainEventPublisherImpl(kafkaTemplate,objectMapper,"delivery-events");
     }
 
     

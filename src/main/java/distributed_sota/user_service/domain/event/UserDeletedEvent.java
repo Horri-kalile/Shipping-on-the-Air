@@ -2,8 +2,17 @@ package distributed_sota.user_service.domain.event;
 
 import java.time.Instant;
 
-public record UserDeletedEvent(String userId, String type, Instant occurredAt) {
-    public UserDeletedEvent(String userId) {
-        this(userId, "UserDeletedEvent", Instant.now());
+public record UserDeletedEvent(
+        String userId,
+        Instant occurredAt
+) implements UserEvent {
+
+    public static UserDeletedEvent of(String userId) {
+        return new UserDeletedEvent(userId, Instant.now());
+    }
+
+    @Override
+    public String type() {
+        return "UserDeletedEvent";
     }
 }

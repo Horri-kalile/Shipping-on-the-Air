@@ -12,6 +12,8 @@ import distributed_sota.user_service.domain.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
+
 public class UserServiceImpl implements UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -45,7 +47,7 @@ public class UserServiceImpl implements UserService {
         userRepository.addUser(user);
         log.info("[USER][REGISTER] repo updated id={}", user.getId());
         // publish event async
-        UserRegisteredEvent ev = new UserRegisteredEvent(user.getId().toString(), user.getEmail().toString(), name);
+        UserRegisteredEvent ev = new UserRegisteredEvent(user.getId().value(), name, user.getEmail().value(), Instant.now());
         eventPublisher.publish(ev);
         log.info("[USER][REGISTER] event published id={}", user.getId());
         return user;
@@ -77,7 +79,7 @@ public class UserServiceImpl implements UserService {
         userRepository.updateUser(user);
         log.info("[USER][EMAIL] repo updated id={}", userId);
 
-        UserEmailUpdatedEvent ev = new UserEmailUpdatedEvent(userId.toString(), oldEmail, newEmail.toString());
+        UserEmailUpdatedEvent ev = new UserEmailUpdatedEvent(userId.toString(), oldEmail, newEmail.toString(), Instant.now());
         eventPublisher.publish(ev);
         log.info("[USER][EMAIL] event published id={}", userId);
     }

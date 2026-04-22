@@ -1,10 +1,20 @@
 package distributed_sota.delivery_service.domain.event;
 
-import distributed_sota.delivery_service.domain.model.DeliveryId;
+import java.time.Instant;
 
-/**
- *
- * Domain event: delivery failed
- *
- */
-public record DeliveryFailedEvent (DeliveryId id, String userId, String reason) implements DeliveryEvent {}
+public record DeliveryFailedEvent(
+        String deliveryId,
+        String userId,
+        String reason,
+        Instant occurredAt
+) implements DeliveryEvent {
+
+    public static DeliveryFailedEvent of(String deliveryId, String userId, String reason) {
+        return new DeliveryFailedEvent(deliveryId, userId, reason, Instant.now());
+    }
+
+    @Override
+    public String type() {
+        return "DeliveryFailedEvent";
+    }
+}
