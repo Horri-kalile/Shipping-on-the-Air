@@ -17,7 +17,6 @@ import distributed_sota.user_service.application.service.UserServiceImpl;
 import distributed_sota.user_service.infrastructure.adapter.DeliveryAdapter;
 import distributed_sota.user_service.infrastructure.controller.UserController;
 import distributed_sota.user_service.infrastructure.event.UserEventPublisher;
-import distributed_sota.user_service.infrastructure.repository.InMemoryUserRepository;
 
 @SpringBootApplication
 public class UserServiceMain {
@@ -35,12 +34,6 @@ public class UserServiceMain {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
-    }
-
-    // --- REPOSITORY ---
-    @Bean
-    public UserRepository userRepository() {
-        return new InMemoryUserRepository();
     }
 
     // --- ADAPTER : DELIVERY → REST ---
