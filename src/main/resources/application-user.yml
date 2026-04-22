@@ -1,0 +1,15 @@
+server:
+  port: 8081
+
+services:
+  delivery:
+    base-url: http://localhost:8080/deliveries
+
+spring:
+  data:
+    mongodb:
+      uri: ${USER_MONGODB_URI}
+  kafka:
+    consumer:
+      group-id: user-service
+    bootstrap-servers: localhost:9092

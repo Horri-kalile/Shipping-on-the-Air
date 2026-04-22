@@ -1,11 +1,11 @@
 package distributed_sota.user_service.domain.model;
 
-import common.ddd.ValueObject;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+
+import common.ddd.ValueObject;
 
 public class Password implements ValueObject {
 
@@ -16,6 +16,13 @@ public class Password implements ValueObject {
             throw new IllegalArgumentException("Weak password: must contain at least 8 characters, 1 digit, 1 upper-case letter.");
         }
         this.hash = hashPassword(value);
+    }
+
+    private Password(String hash, boolean alreadyHashed) {
+        if (hash == null || hash.isBlank()) {
+            throw new IllegalArgumentException("Password hash cannot be empty");
+        }
+        this.hash = hash;
     }
 
     public String value() {
@@ -45,5 +52,9 @@ public class Password implements ValueObject {
 
     public static Password is(String password) {
         return new Password(password);
+    }
+
+    public static Password fromHash(String hash) {
+        return new Password(hash, true);
     }
 }
