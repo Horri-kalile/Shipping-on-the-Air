@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import distributed_sota.delivery_service.application.port.DeliveryRepository;
 import distributed_sota.delivery_service.application.port.DeliveryService;
 import distributed_sota.delivery_service.application.port.DomainEventPublisher;

@@ -1,11 +1,14 @@
 package distributed_sota.user_service.infrastructure.event;
 
+import org.springframework.kafka.core.KafkaTemplate;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import distributed_sota.user_service.application.port.UserEventPublisherPort;
 import distributed_sota.user_service.domain.event.UserDeletedEvent;
 import distributed_sota.user_service.domain.event.UserEmailUpdatedEvent;
 import distributed_sota.user_service.domain.event.UserRegisteredEvent;
-import org.springframework.kafka.core.KafkaTemplate;
 
 public class UserEventPublisher implements UserEventPublisherPort {
 

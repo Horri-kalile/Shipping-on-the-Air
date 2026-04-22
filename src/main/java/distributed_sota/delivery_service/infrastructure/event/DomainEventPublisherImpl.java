@@ -1,17 +1,15 @@
 package distributed_sota.delivery_service.infrastructure.event;
 
-import org.springframework.kafka.core.KafkaTemplate;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import distributed_sota.delivery_service.application.port.DomainEventPublisher;
-import distributed_sota.delivery_service.domain.event.DeliveryEvent;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import distributed_sota.delivery_service.domain.event.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import distributed_sota.delivery_service.application.port.DomainEventPublisher;
+import distributed_sota.delivery_service.domain.event.DeliveryEvent;
+import distributed_sota.delivery_service.domain.event.EtaUpdatedEvent;
 
 public class DomainEventPublisherImpl implements DomainEventPublisher {
 

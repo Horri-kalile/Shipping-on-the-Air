@@ -1,22 +1,23 @@
 package distributed_sota.user_service.infrastructure;
 
-import distributed_sota.payment_service.infrastructure.PaymentServiceMain;
-import distributed_sota.user_service.application.port.DeliveryPort;
-import distributed_sota.user_service.application.port.UserEventPublisherPort;
-import distributed_sota.user_service.application.repository.UserRepository;
-import distributed_sota.user_service.application.service.UserService;
-import distributed_sota.user_service.application.service.UserServiceImpl;
-import distributed_sota.user_service.infrastructure.adapter.DeliveryAdapter;
-import distributed_sota.user_service.infrastructure.event.UserEventPublisher;
-import distributed_sota.user_service.infrastructure.repository.InMemoryUserRepository;
-import distributed_sota.user_service.infrastructure.controller.UserController;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import distributed_sota.user_service.application.port.DeliveryPort;
+import distributed_sota.user_service.application.port.UserEventPublisherPort;
+import distributed_sota.user_service.application.repository.UserRepository;
+import distributed_sota.user_service.application.service.UserService;
+import distributed_sota.user_service.application.service.UserServiceImpl;
+import distributed_sota.user_service.infrastructure.adapter.DeliveryAdapter;
+import distributed_sota.user_service.infrastructure.controller.UserController;
+import distributed_sota.user_service.infrastructure.event.UserEventPublisher;
+import distributed_sota.user_service.infrastructure.repository.InMemoryUserRepository;
 
 @SpringBootApplication
 public class UserServiceMain {
@@ -50,8 +51,8 @@ public class UserServiceMain {
 
     // --- ADAPTER : KAFKA EVENTS ---
     @Bean
-    public UserEventPublisherPort eventPublisher(KafkaTemplate<String, String> kafkaTemplate) {
-        return new UserEventPublisher(kafkaTemplate, "user-events");
+    public UserEventPublisherPort eventPublisher(KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
+        return new UserEventPublisher(kafkaTemplate, objectMapper, "user-events");
     }
 
     // --- SERVICE (business logic) ---
