@@ -1,27 +1,30 @@
 package distributed_sota.api_gateway.infrastructure.proxy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
 public class DeliveryProxy extends HttpSyncBaseProxy {
 
-    private final String BASE_URL = "http://delivery-service:8080/deliveries";
+    private final String baseUrl;
 
-    public DeliveryProxy(RestTemplate restTemplate) {
+    public DeliveryProxy(RestTemplate restTemplate,
+                         @Value("${services.delivery.base-url}") String baseUrl) {
         super(restTemplate);
+        this.baseUrl = baseUrl;
     }
 
     public String createDelivery(Object dto) {
-        return post(BASE_URL, dto, String.class);
+        return post(baseUrl, dto, String.class);
     }
 
     public void startDelivery(String id) {
-        post(BASE_URL + "/" + id + "/start", null, Void.class);
+        post(baseUrl + "/" + id + "/start", null, Void.class);
     }
 
     public String getStatus(String id) {
-        return get(BASE_URL + "/" + id + "/status", String.class);
+        return get(baseUrl + "/" + id + "/status", String.class);
     }
 
     public String getRemainingTime(String id) {
-        return get(BASE_URL + "/" + id + "/remaining-time", String.class);
+        return get(baseUrl + "/" + id + "/remaining-time", String.class);
     }
 }

@@ -1,20 +1,23 @@
 package distributed_sota.api_gateway.infrastructure.proxy;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
 public class PaymentProxy extends HttpSyncBaseProxy {
 
-    private final String BASE_URL = "http://payment-service:8083/payments";
+    private final String baseUrl;
 
-    public PaymentProxy(RestTemplate restTemplate) {
+    public PaymentProxy(RestTemplate restTemplate,
+                        @Value("${services.payment.base-url}") String baseUrl) {
         super(restTemplate);
+        this.baseUrl = baseUrl;
     }
 
     public void startPayment(String id) {
-        post(BASE_URL + "/" + id + "/start", null, Void.class);
+        post(baseUrl + "/" + id + "/start", null, Void.class);
     }
 
     public void cancelPayment(String id) {
-        post(BASE_URL + "/" + id + "/cancel", null, Void.class);
+        post(baseUrl + "/" + id + "/cancel", null, Void.class);
     }
 }

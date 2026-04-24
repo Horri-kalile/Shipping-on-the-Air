@@ -1,7 +1,6 @@
-version: '3.9'
+version: "3.9"
 
 services:
-  # ------------------- KAFKA (Redpanda) -------------------
   kafka:
     image: redpandadata/redpanda:v23.3.18
     container_name: kafka
@@ -9,31 +8,125 @@ services:
       - redpanda
       - start
       - --overprovisioned
-      - --smp 1
-      - --memory 1G
-      - --reserve-memory 0M
-      - --node-id 0
+      - --smp
+      - "1"
+      - --memory
+      - 1G
+      - --reserve-memory
+      - 0M
+      - --node-id
+      - "0"
       - --check=false
-      - --kafka-addr INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:19092
-      - --advertise-kafka-addr INTERNAL://kafka:9092,EXTERNAL://localhost:19092
+      - --kafka-addr
+      - INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:19092
+      - --advertise-kafka-addr
+      - INTERNAL://kafka:9092,EXTERNAL://localhost:19092
     ports:
       - "19092:19092"
 
-  # ------------------- MONGODB -------------------
   mongodb:
     image: mongo:7
     container_name: mongodb
     ports:
       - "27018:27017"
+    volumes:
+      - mongo-data:/data/db
 
-  # ------------------- TRACKING SERVICE -------------------
+  delivery-service:
+    build:
+      context: .
+      dockerfile: src/main/java/distributed_sota/delivery_service/Dockerfile
+    container_name: delivery-service
+    restart: unless-stopped
+    depends_on:
+      - kafka
+      - mongodb
+    environment:
+      SERVER_PORT: 8080
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      DELIVERY_MONGODB_URI: mongodb://mongodb:27017/delivery
+      DRONEFLEET_BASE_URL: http://dronefleet-service:8080/drones
+      PAYMENT_BASE_URL: http://payment-service:8080/payments
+    ports:
+      - "8081:8080"
+
+  user-service:
+    build:
+      context: .
+      dockerfile: src/main/java/distributed_sota/user_service/Dockerfile
+    container_name: user-service
+    restart: unless-stopped
+    depends_on:
+      - kafka
+      - mongodb
+      - delivery-service
+    environment:
+      SERVER_PORT: 8080
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      USER_MONGODB_URI: mongodb://mongodb:27017/user
+      DELIVERY_BASE_URL: http://delivery-service:8080/deliveries
+    ports:
+      - "8082:8080"
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: src/main/java/distributed_sota/payment_service/Dockerfile
+    container_name: payment-service
+    restart: unless-stopped
+    depends_on:
+      - kafka
+      - mongodb
+    environment:
+      SERVER_PORT: 8080
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      PAYMENT_MONGODB_URI: mongodb://mongodb:27017/payment
+      PAYMENT_BASE_URL: http://payment-service:8080/payments
+      PAYMENT_CALLBACK_URL: http://payment-service:8080/payments
+    ports:
+      - "8083:8080"
+
+  dronefleet-service:
+    build:
+      context: .
+      dockerfile: src/main/java/distributed_sota/dronefleet_service/Dockerfile
+    container_name: dronefleet-service
+    restart: unless-stopped
+    depends_on:
+      - kafka
+      - mongodb
+      - delivery-service
+    environment:
+      SERVER_PORT: 8080
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      DRONEFLEET_MONGODB_URI: mongodb://mongodb:27017/dronefleet
+      DELIVERY_BASE_URL: http://delivery-service:8080/deliveries
+    ports:
+      - "8084:8080"
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: src/main/java/distributed_sota/notification_service/Dockerfile
+    container_name: notification-service
+    restart: unless-stopped
+    depends_on:
+      - kafka
+    environment:
+      SERVER_PORT: 8080
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    ports:
+      - "8085:8080"
+
   tracking-service:
     build:
       context: ./tracking-service
     container_name: tracking-service
+    restart: unless-stopped
     depends_on:
       - kafka
       - mongodb
+      - delivery-service
     environment:
       APP_NAME: tracking-service
       API_HOST: 0.0.0.0
@@ -44,82 +137,29 @@ services:
       MONGO_URI: mongodb://mongodb:27017
       MONGO_DB_NAME: tracking
       MONGO_COLLECTION_NAME: tracking_states
-      DELIVERY_SERVICE_BASE_URL: http://host.docker.internal:8080
+      DELIVERY_SERVICE_BASE_URL: http://delivery-service:8080
     ports:
-      - "8083:8080"
-
-
-  delivery-service:
-    build: ./delivery-service
-    container_name: delivery-service
-    restart: always
-    ports:
-      - "8081:8080"
-    depends_on:
-      - kafka
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-
-
-  user-service:
-    build: ./user-service
-    container_name: user-service
-    restart: always
-    ports:
-      - "8082:8080"
-    depends_on:
-      - kafka
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-
-
-  payment-service:
-    build: ./payment-service
-    container_name: payment-service
-    restart: always
-    ports:
-      - "8083:8080"
-    depends_on:
-      - kafka
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-
-
-  dronefleet-service:
-    build: ./dronefleet-service
-    container_name: dronefleet-service
-    restart: always
-    ports:
-      - "8084:8080"
-    depends_on:
-      - kafka
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-
-
-  notification-service:
-    build: ./notification-service
-    container_name: notification-service
-    restart: always
-    ports:
-      - "8085:8080"
-    depends_on:
-      - kafka
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    volumes:
-      - ./logs:/app/logs
-
+      - "8086:8080"
 
   api-gateway:
-    build: ./api-gateway
+    build:
+      context: .
+      dockerfile: src/main/java/distributed_sota/api_gateway/infrastructure/Dockerfile
     container_name: api-gateway
-    restart: always
-    ports:
-      - "8080:8080"
+    restart: unless-stopped
     depends_on:
       - user-service
       - delivery-service
       - payment-service
       - dronefleet-service
-      - notification-service
+    environment:
+      SERVER_PORT: 8080
+      DELIVERY_SERVICE_BASE_URL: http://delivery-service:8080/deliveries
+      USER_SERVICE_BASE_URL: http://user-service:8080/users
+      PAYMENT_SERVICE_BASE_URL: http://payment-service:8080/payments
+      DRONEFLEET_SERVICE_BASE_URL: http://dronefleet-service:8080/drones
+    ports:
+      - "8080:8080"
+
+volumes:
+  mongo-data:

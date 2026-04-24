@@ -12,7 +12,9 @@ import org.springframework.context.annotation.Bean;
 public class NotificationServiceMain {
 
     public static void main(String[] args) {
-        SpringApplication.run(NotificationServiceMain.class, args);
+        SpringApplication app = new SpringApplication(NotificationServiceMain.class);
+        app.setAdditionalProfiles("notification");
+        app.run(args);
     }
 
     // ========================= CORE BEANS =========================

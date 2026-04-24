@@ -9,7 +9,9 @@ import org.springframework.web.client.RestTemplate;
 public class ApiGatewayMain {
 
     public static void main(String[] args) {
-        SpringApplication.run(ApiGatewayMain.class, args);
+        SpringApplication app = new SpringApplication(ApiGatewayMain.class);
+        app.setAdditionalProfiles("api-gateway");
+        app.run(args);
     }
 
     @Bean

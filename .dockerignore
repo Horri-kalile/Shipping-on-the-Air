@@ -1,0 +1,7 @@
+.git
+.github
+.gradle
+.idea
+build
+tracking-service/__pycache__
+tracking-service/.pytest_cache

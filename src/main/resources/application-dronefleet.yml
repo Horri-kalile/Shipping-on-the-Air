@@ -1,15 +1,15 @@
 server:
-  port: 8082
+  port: ${SERVER_PORT:8082}
 
 services:
   delivery:
-    base-url: http://localhost:8080/deliveries
+    base-url: ${DELIVERY_BASE_URL:http://localhost:8080/deliveries}
 
 spring:
   data:
     mongodb:
-      uri: ${DRONEFLEET_MONGODB_URI}
+      uri: ${DRONEFLEET_MONGODB_URI:mongodb://localhost:27017/dronefleet}
   kafka:
     consumer:
       group-id: dronefleet-service
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}

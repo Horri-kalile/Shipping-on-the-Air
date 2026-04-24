@@ -37,6 +37,13 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.25.3")
 }
 
+val copyRuntimeLibs by tasks.registering(Copy::class) {
+    group = "build"
+    description = "Copies runtime dependencies for Docker images"
+    from(configurations.runtimeClasspath)
+    into(layout.buildDirectory.dir("runtime-libs"))
+}
+
 // -------------------------------------------
 //  IMPORTANT : désactive bootJar car monorepo
 // -------------------------------------------
