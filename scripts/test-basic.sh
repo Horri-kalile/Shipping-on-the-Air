@@ -21,7 +21,7 @@ echo "${DRONE_RESPONSE}"
 
 USER_EMAIL="john.$(date +%s)@example.com"
 echo "Registering user ${USER_EMAIL}..."
-USER_RESPONSE="$(curl -fsS -X POST "${API_GATEWAY_URL}/api/users/register?name=John&email=${USER_EMAIL}&password=secret123")"
+USER_RESPONSE="$(curl -fsS -X POST "${API_GATEWAY_URL}/api/users/register?name=John&email=${USER_EMAIL}&password=Secret123")"
 echo "${USER_RESPONSE}"
 USER_ID="$(echo "${USER_RESPONSE}" | sed -n 's/.*"id":"\([^"]*\)".*/\1/p')"
 
@@ -43,9 +43,14 @@ DELIVERY_RESPONSE="$(curl -fsS -X POST "${API_GATEWAY_URL}/api/deliveries" \
   }")"
 echo "${DELIVERY_RESPONSE}"
 DELIVERY_ID="$(printf '%s' "${DELIVERY_RESPONSE}" | tr -d '"')"
+PAYMENT_ID="${USER_ID}_${DELIVERY_ID}"
 
 echo "Starting delivery ${DELIVERY_ID}..."
 curl -fsS -X POST "${API_GATEWAY_URL}/api/deliveries/${DELIVERY_ID}/start"
+echo
+
+echo "Starting payment ${PAYMENT_ID}..."
+curl -fsS -X POST "${API_GATEWAY_URL}/api/payments/${PAYMENT_ID}/start"
 echo
 
 echo "Delivery status:"
@@ -56,6 +61,17 @@ echo "Delivery remaining time:"
 curl -fsS "${API_GATEWAY_URL}/api/deliveries/${DELIVERY_ID}/remaining-time"
 echo
 
-echo "Tracking snapshot:"
-curl -fsS "${TRACKING_URL}/tracking/${DELIVERY_ID}" || true
+echo "Waiting for tracking events..."
+for _ in $(seq 1 20); do
+  if TRACKING_RESPONSE="$(curl -fsS "${TRACKING_URL}/tracking/${DELIVERY_ID}" 2>/dev/null)"; then
+    echo "Tracking snapshot:"
+    echo "${TRACKING_RESPONSE}"
+    break
+  fi
+  sleep 2
+done
+
+if [ -z "${TRACKING_RESPONSE:-}" ]; then
+  echo "Tracking snapshot not available yet for ${DELIVERY_ID}"
+fi
 echo

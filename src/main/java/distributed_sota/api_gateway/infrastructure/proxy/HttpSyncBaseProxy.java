@@ -1,6 +1,8 @@
 package distributed_sota.api_gateway.infrastructure.proxy;
 
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
 
 public abstract class HttpSyncBaseProxy {
 
@@ -11,14 +13,26 @@ public abstract class HttpSyncBaseProxy {
     }
 
     protected <T> T get(String url, Class<T> responseType) {
-        return restTemplate.getForObject(url, responseType);
+        try {
+            return restTemplate.getForObject(url, responseType);
+        } catch (HttpStatusCodeException ex) {
+            throw new ResponseStatusException(ex.getStatusCode(), ex.getResponseBodyAsString(), ex);
+        }
     }
 
     protected <T> T post(String url, Object body, Class<T> responseType) {
-        return restTemplate.postForObject(url, body, responseType);
+        try {
+            return restTemplate.postForObject(url, body, responseType);
+        } catch (HttpStatusCodeException ex) {
+            throw new ResponseStatusException(ex.getStatusCode(), ex.getResponseBodyAsString(), ex);
+        }
     }
 
     protected void put(String url, Object body) {
-        restTemplate.put(url, body);
+        try {
+            restTemplate.put(url, body);
+        } catch (HttpStatusCodeException ex) {
+            throw new ResponseStatusException(ex.getStatusCode(), ex.getResponseBodyAsString(), ex);
+        }
     }
 }
