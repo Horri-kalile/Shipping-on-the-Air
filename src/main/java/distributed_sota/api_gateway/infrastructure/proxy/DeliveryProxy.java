@@ -1,5 +1,4 @@
 package distributed_sota.api_gateway.infrastructure.proxy;
-import org.gradle.api.component.Component;
 import org.springframework.web.client.RestTemplate;
 
 public class DeliveryProxy extends HttpSyncBaseProxy {

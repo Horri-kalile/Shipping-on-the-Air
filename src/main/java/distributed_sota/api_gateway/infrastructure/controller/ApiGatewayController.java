@@ -1,7 +1,6 @@
 package distributed_sota.api_gateway.infrastructure.controller;
 
 import distributed_sota.api_gateway.infrastructure.proxy.*;
-import org.gradle.api.component.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 

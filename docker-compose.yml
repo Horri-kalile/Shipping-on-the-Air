@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   # ------------------- KAFKA (Redpanda) -------------------
   kafka:
@@ -45,3 +47,79 @@ services:
       DELIVERY_SERVICE_BASE_URL: http://host.docker.internal:8080
     ports:
       - "8083:8080"
+
+
+  delivery-service:
+    build: ./delivery-service
+    container_name: delivery-service
+    restart: always
+    ports:
+      - "8081:8080"
+    depends_on:
+      - kafka
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    restart: always
+    ports:
+      - "8082:8080"
+    depends_on:
+      - kafka
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+
+  payment-service:
+    build: ./payment-service
+    container_name: payment-service
+    restart: always
+    ports:
+      - "8083:8080"
+    depends_on:
+      - kafka
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+
+  dronefleet-service:
+    build: ./dronefleet-service
+    container_name: dronefleet-service
+    restart: always
+    ports:
+      - "8084:8080"
+    depends_on:
+      - kafka
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    restart: always
+    ports:
+      - "8085:8080"
+    depends_on:
+      - kafka
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    volumes:
+      - ./logs:/app/logs
+
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-service
+      - delivery-service
+      - payment-service
+      - dronefleet-service
+      - notification-service
