@@ -23,10 +23,10 @@ import distributed_sota.delivery_service.infrastructure.event.DomainEventPublish
 @SpringBootApplication
 public class DeliveryServiceMain {
 
-    @Value("${services.payment.base-url}")
+    @Value("${services.payment.base-url:${PAYMENT_BASE_URL}}")
     private String paymentBaseUrl;
 
-    @Value("${services.dronefleet.base-url}")
+    @Value("${services.dronefleet.base-url:${DRONEFLEET_BASE_URL}}")
     private String droneFleetBaseUrl;
 
     public static void main(String[] args) {

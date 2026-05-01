@@ -19,7 +19,7 @@ public class DeliveryAdapter implements DeliveryServicePort {
 
 
     public DeliveryAdapter(RestTemplate restTemplate,
-                           @Value("${services.delivery.base-url}") String baseUrl) {
+                           @Value("${services.delivery.base-url:${DELIVERY_BASE_URL}}") String baseUrl) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
     }

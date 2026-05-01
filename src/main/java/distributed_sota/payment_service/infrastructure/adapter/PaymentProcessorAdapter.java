@@ -23,7 +23,7 @@ public class PaymentProcessorAdapter implements PaymentProcessPort {
 
     public PaymentProcessorAdapter(
             RestTemplate restTemplate,
-            @Value("${payment.callback.url}") String baseUrl) {
+            @Value("${payment.callback.url:${PAYMENT_CALLBACK_URL}}") String baseUrl) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
     }

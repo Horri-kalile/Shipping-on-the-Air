@@ -19,7 +19,7 @@ public class DroneFleetAdapter implements DroneFleetPort {
     private static final Logger log = LoggerFactory.getLogger(DroneFleetAdapter.class);
 
     public DroneFleetAdapter(RestTemplate restTemplate,
-                             @Value("${services.dronefleet.base-url}") String baseUrl) {
+                             @Value("${services.dronefleet.base-url:${DRONEFLEET_BASE_URL}}") String baseUrl) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
     }

@@ -19,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class PaymentServiceMain {
 
-    @Value("${services.payment.base-url}")
+    @Value("${services.payment.base-url:${PAYMENT_BASE_URL}}")
     private String paymentBaseUrl;
 
     public static void main(String[] args) {

@@ -21,7 +21,7 @@ import distributed_sota.user_service.infrastructure.event.UserEventPublisher;
 @SpringBootApplication
 public class UserServiceMain {
 
-    @Value("${services.delivery.base-url}")
+    @Value("${services.delivery.base-url:${DELIVERY_BASE_URL}}")
     private String deliveryBaseUrl;
 
     public static void main(String[] args) {

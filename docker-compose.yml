@@ -48,7 +48,7 @@ services:
       DRONEFLEET_BASE_URL: http://dronefleet-service:8080/drones
       PAYMENT_BASE_URL: http://payment-service:8080/payments
     ports:
-      - "8081:8080"
+      - "8087:8080"
 
   user-service:
     build:
@@ -152,12 +152,14 @@ services:
       - delivery-service
       - payment-service
       - dronefleet-service
+      - tracking-service
     environment:
       SERVER_PORT: 8080
       DELIVERY_SERVICE_BASE_URL: http://delivery-service:8080/deliveries
       USER_SERVICE_BASE_URL: http://user-service:8080/users
       PAYMENT_SERVICE_BASE_URL: http://payment-service:8080/payments
       DRONEFLEET_SERVICE_BASE_URL: http://dronefleet-service:8080/drones
+      TRACKING_SERVICE_BASE_URL: http://tracking-service:8080/tracking
     ports:
       - "8080:8080"
 
