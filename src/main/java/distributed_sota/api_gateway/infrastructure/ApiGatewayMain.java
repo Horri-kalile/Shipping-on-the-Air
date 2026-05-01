@@ -23,7 +23,7 @@ public class ApiGatewayMain {
     @Bean
     public DeliveryProxy deliveryProxy(
             RestTemplate restTemplate,
-            @Value("${services.delivery.base-url}") String deliveryBaseUrl
+            @Value("${services.delivery.base-url:${DELIVERY_SERVICE_BASE_URL}}") String deliveryBaseUrl
     ) {
         return new DeliveryProxy(restTemplate, deliveryBaseUrl);
     }
@@ -31,7 +31,7 @@ public class ApiGatewayMain {
     @Bean
     public UserProxy userProxy(
             RestTemplate restTemplate,
-            @Value("${services.user.base-url}") String userBaseUrl
+            @Value("${services.user.base-url:${USER_SERVICE_BASE_URL}}") String userBaseUrl
     ) {
         return new UserProxy(restTemplate, userBaseUrl);
     }
@@ -39,7 +39,7 @@ public class ApiGatewayMain {
     @Bean
     public PaymentProxy paymentProxy(
             RestTemplate restTemplate,
-            @Value("${services.payment.base-url}") String paymentBaseUrl
+            @Value("${services.payment.base-url:${PAYMENT_SERVICE_BASE_URL}}") String paymentBaseUrl
     ) {
         return new PaymentProxy(restTemplate, paymentBaseUrl);
     }
@@ -47,8 +47,16 @@ public class ApiGatewayMain {
     @Bean
     public DroneProxy droneProxy(
             RestTemplate restTemplate,
-            @Value("${services.dronefleet.base-url}") String dronefleetBaseUrl
+            @Value("${services.dronefleet.base-url:${DRONEFLEET_SERVICE_BASE_URL}}") String dronefleetBaseUrl
     ) {
         return new DroneProxy(restTemplate, dronefleetBaseUrl);
+    }
+
+    @Bean
+    public TrackingProxy trackingProxy(
+            RestTemplate restTemplate,
+            @Value("${services.tracking.base-url:${TRACKING_SERVICE_BASE_URL}}") String trackingBaseUrl
+    ) {
+        return new TrackingProxy(restTemplate, trackingBaseUrl);
     }
 }

@@ -22,7 +22,7 @@ public class DeliveryAdapter implements DeliveryPort {
     private static final Logger log = LoggerFactory.getLogger(DeliveryAdapter.class);
 
     public DeliveryAdapter(RestTemplate restTemplate,
-                           @Value("${services.delivery.base-url}") String baseUrl) {
+                           @Value("${services.delivery.base-url:${DELIVERY_BASE_URL}}") String baseUrl) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
     }

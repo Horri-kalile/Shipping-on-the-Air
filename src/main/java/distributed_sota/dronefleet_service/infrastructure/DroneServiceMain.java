@@ -26,7 +26,7 @@ import distributed_sota.dronefleet_service.infrastructure.event.DroneEventPublis
 @EnableScheduling
 public class DroneServiceMain {
 
-    @Value("${services.delivery.base-url}")
+    @Value("${services.delivery.base-url:${DELIVERY_BASE_URL}}")
     private String deliveryBaseUrl;
 
     public static void main(String[] args) {

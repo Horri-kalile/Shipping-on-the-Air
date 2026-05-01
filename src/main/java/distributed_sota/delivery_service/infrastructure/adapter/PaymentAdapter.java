@@ -25,7 +25,7 @@ public class PaymentAdapter implements PaymentPort {
 
 
     public PaymentAdapter(RestTemplate restTemplate,
-                          @Value("${services.payment.base-url}") String baseUrl) {
+                          @Value("${services.payment.base-url:${PAYMENT_BASE_URL}}") String baseUrl) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
     }

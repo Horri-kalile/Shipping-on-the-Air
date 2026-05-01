@@ -13,15 +13,18 @@ public class ApiGatewayController {
     private final UserProxy userProxy;
     private final PaymentProxy paymentProxy;
     private final DroneProxy droneProxy;
+    private final TrackingProxy trackingProxy;
 
     public ApiGatewayController(DeliveryProxy deliveryProxy,
                                 UserProxy userProxy,
                                 PaymentProxy paymentProxy,
-                                DroneProxy droneProxy) {
+                                DroneProxy droneProxy,
+                                TrackingProxy trackingProxy) {
         this.deliveryProxy = deliveryProxy;
         this.userProxy = userProxy;
         this.paymentProxy = paymentProxy;
         this.droneProxy = droneProxy;
+        this.trackingProxy = trackingProxy;
     }
 
     // DELIVERY
@@ -43,6 +46,11 @@ public class ApiGatewayController {
     @GetMapping("/deliveries/{id}/remaining-time")
     public String eta(@PathVariable String id) {
         return deliveryProxy.getRemainingTime(id);
+    }
+
+    @GetMapping("/tracking/{id}")
+    public String tracking(@PathVariable String id) {
+        return trackingProxy.getTracking(id);
     }
 
     // USER
