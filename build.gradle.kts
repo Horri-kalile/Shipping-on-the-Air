@@ -2,6 +2,9 @@ plugins {
     java
     id("org.springframework.boot") version "3.2.0"
     id("io.spring.dependency-management") version "1.1.3"
+    jacoco
+    pmd
+    checkstyle
 }
 
 group = "org.example"
@@ -69,6 +72,20 @@ tasks.register<JavaExec>("runService") {
     description = "Run a microservice by specifying main class with -PmainClass"
     mainClass.set(findProperty("mainClass")?.toString() ?: "")
     classpath = sourceSets["main"].runtimeClasspath
+}
+
+// -------------------------------------------
+//  QA TOOLS CONFIGURATION
+// -------------------------------------------
+checkstyle {
+    toolVersion = "10.12.4"
+    isIgnoreFailures = true
+}
+
+pmd {
+    toolVersion = "6.55.0"
+    isIgnoreFailures = true
+    ruleSets = listOf("category/java/errorprone.xml", "category/java/bestpractices.xml")
 }
 
 // -------------------------------------------
