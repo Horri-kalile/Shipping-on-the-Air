@@ -76,3 +76,20 @@ jobs:
           # Run pytest. If no tests are found, it usually exits with code 5. 
           # We will add tests soon, but for now we let it pass if empty.
           pytest || true
+
+  # ==========================================
+  # CONTINUOUS DELIVERY (CD) PHASE
+  # ==========================================
+  build-docker:
+    name: Build Docker Images (CD)
+    needs: [build-java, build-python] # Only run if CI tests pass
+    if: github.ref == 'refs/heads/main' # Only deliver from the main branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build and verify Docker Compose
+        # This proves the system is ready to be deployed without actually pushing it to a public registry yet
+        run: docker compose build
