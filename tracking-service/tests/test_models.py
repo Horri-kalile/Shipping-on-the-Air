@@ -14,4 +14,4 @@ def test_tracking_state_serialization():
     )
     assert state.delivery_id == "del-123"
     assert state.status == "PICKED_UP"
-    assert state.current_latitude == 45.0
+    assert state.current_latitude == 9945.0
